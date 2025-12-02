@@ -148,6 +148,54 @@ export default function DataUpload({ onDataLoad }: DataUploadProps) {
         });
     }, [onDataLoad, toast]);
 
+    const [savedDatasets, setSavedDatasets] = useState<any[]>([]);
+    const [selectedDatasetId, setSelectedDatasetId] = useState<string>("");
+
+    React.useEffect(() => {
+        fetch('/api/datasets')
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setSavedDatasets(data);
+            })
+            .catch(err => console.error("Failed to load datasets", err));
+    }, []);
+
+    const handleLoadSaved = async () => {
+        if (!selectedDatasetId) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/datasets/${selectedDatasetId}`);
+            if (!res.ok) throw new Error("Failed to fetch dataset");
+
+            const data = await res.json();
+            if (data.records) {
+                const formattedData = data.records.map((r: any) => {
+                    // Prefer rawData if available to preserve all original fields
+                    if (r.rawData && typeof r.rawData === 'object') return r.rawData;
+                    // Fallback to mapped fields
+                    return {
+                        Date: r.date,
+                        Product: r.product,
+                        Quantity: r.quantity,
+                        Total_Value: r.totalValue,
+                        port: r.port,
+                        country_of_origin: r.countryOfOrigin,
+                        ...r
+                    };
+                });
+
+                onDataLoad(formattedData);
+                localStorage.setItem('shipmentData', JSON.stringify(formattedData));
+                toast({ title: "Loaded Saved Dataset", description: `Loaded ${formattedData.length} records from ${data.name}` });
+            }
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error", description: "Failed to load dataset", variant: "destructive" });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Card className="relative bg-card/50 backdrop-blur-xl border-primary/20 shadow-2xl overflow-hidden">
             <GlowingEffect
@@ -168,7 +216,7 @@ export default function DataUpload({ onDataLoad }: DataUploadProps) {
                     </span>
                 </CardTitle>
                 <CardDescription className="text-base">
-                    Upload your CSV/Excel file or generate sample import-export trade data
+                    Upload your CSV/Excel file, generate sample data, or load a saved dataset
                 </CardDescription>
             </CardHeader>
 
@@ -218,6 +266,34 @@ export default function DataUpload({ onDataLoad }: DataUploadProps) {
                     </Button>
                 </div>
 
+                {/* Load Saved Dataset */}
+                {savedDatasets.length > 0 && (
+                    <div className="p-4 rounded-xl border border-primary/10 bg-card/30 space-y-3">
+                        <h3 className="text-sm font-medium text-muted-foreground">Load from Saved Datasets</h3>
+                        <div className="flex gap-2">
+                            <select
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={selectedDatasetId}
+                                onChange={(e) => setSelectedDatasetId(e.target.value)}
+                                disabled={loading}
+                            >
+                                <option value="" disabled>Select a dataset...</option>
+                                {savedDatasets.map((ds) => (
+                                    <option key={ds.id} value={ds.id}>
+                                        {ds.name} ({ds._count?.records || 0} records)
+                                    </option>
+                                ))}
+                            </select>
+                            <Button
+                                onClick={handleLoadSaved}
+                                disabled={!selectedDatasetId || loading}
+                            >
+                                Load
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <FileSpreadsheet className="h-4 w-4" />
                     <span>Import/Export trade data with shipments, values, countries, and more</span>
@@ -261,6 +337,14 @@ export default function DataUpload({ onDataLoad }: DataUploadProps) {
 
                                     toast({ title: "Saved to Cloud", description: result.message });
                                     if (nameInput) nameInput.value = ''; // Clear input
+
+                                    // Refresh saved datasets list
+                                    fetch('/api/datasets')
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (Array.isArray(data)) setSavedDatasets(data);
+                                        });
+
                                 } catch (e: any) {
                                     toast({
                                         title: "Save Failed",
