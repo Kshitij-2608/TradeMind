@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Spotlight } from "@/components/ui/spotlight-aceternity";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, BarChart3 } from "lucide-react";
+import Link from "next/link";
 
 export function Hero() {
     return (
@@ -55,22 +56,15 @@ export function Hero() {
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        <Button
-                            size="lg"
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all group"
-                        >
-                            Get Started
-                            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            className="border-border hover:bg-accent/10 hover:border-accent/50 hover:text-accent transition-all"
-                        >
-                            <BarChart3 className="mr-2 h-5 w-5" />
-                            View Demo
-                        </Button>
+                        <Link href="/signup">
+                            <Button
+                                size="lg"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all group"
+                            >
+                                Get Started
+                                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                        </Link>
                     </div>
 
                     {/* Stats */}

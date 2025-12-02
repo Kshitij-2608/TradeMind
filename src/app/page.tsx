@@ -105,7 +105,7 @@ export default function LandingPage() {
                 </p>
                 <Link href="/signup">
                   <Button size="lg" className="gap-2">
-                    Start Free Trial <ArrowRight className="h-4 w-4" />
+                    Start Now <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
               </div>
