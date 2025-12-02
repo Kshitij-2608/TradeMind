@@ -16,27 +16,57 @@ export default function SignupPage() {
     const router = useRouter();
     const { toast } = useToast();
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate signup delay
-        setTimeout(async () => {
-            // Auto login after "signup"
-            await signIn('credentials', {
-                email: 'demo@example.com',
-                password: 'password',
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstName, lastName, email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Something went wrong');
+            }
+
+            // Auto login after signup
+            const result = await signIn('credentials', {
+                email,
+                password,
                 redirect: false,
             });
 
+            if (result?.error) {
+                toast({
+                    title: "Signup Successful",
+                    description: "Please sign in with your new account.",
+                });
+                router.push('/login');
+            } else {
+                toast({
+                    title: "Account Created",
+                    description: "Welcome to the platform!",
+                });
+                router.push('/dashboard');
+            }
+        } catch (error: any) {
             toast({
-                title: "Account Created",
-                description: "Welcome to the platform!",
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
             });
-
-            router.push('/dashboard');
+        } finally {
             setIsLoading(false);
-        }, 1500);
+        }
     };
 
     return (
@@ -57,20 +87,49 @@ export default function SignupPage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="first-name">First name</Label>
-                            <Input id="first-name" placeholder="John" required className="bg-background/50 border-primary/20" />
+                            <Input
+                                id="first-name"
+                                placeholder="John"
+                                required
+                                className="bg-background/50 border-primary/20"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                            />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="last-name">Last name</Label>
-                            <Input id="last-name" placeholder="Doe" required className="bg-background/50 border-primary/20" />
+                            <Input
+                                id="last-name"
+                                placeholder="Doe"
+                                required
+                                className="bg-background/50 border-primary/20"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                            />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="name@example.com" required className="bg-background/50 border-primary/20" />
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            className="bg-background/50 border-primary/20"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="password">Password</Label>
-                        <Input id="password" type="password" required className="bg-background/50 border-primary/20" />
+                        <Input
+                            id="password"
+                            type="password"
+                            required
+                            className="bg-background/50 border-primary/20"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
                     <Button
                         type="submit"

@@ -53,14 +53,10 @@ export function Header() {
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                Profile
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                Saved Databases
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                Settings
+                            <DropdownMenuItem asChild>
+                                <a href="/dashboard/saved-databases" className="cursor-pointer w-full">
+                                    Saved Databases
+                                </a>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem

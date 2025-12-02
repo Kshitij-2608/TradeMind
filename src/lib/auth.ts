@@ -17,16 +17,33 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                // Mock authentication for demo purposes
-                // In a real app, you would check against a database here
-                if (credentials?.email && credentials?.password) {
+                if (!credentials?.email || !credentials?.password) {
+                    return null;
+                }
+
+                const { prisma } = await import("@/lib/db");
+                const crypto = await import("crypto");
+
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email },
+                });
+
+                if (!user || !user.password) {
+                    return null;
+                }
+
+                const [salt, hash] = user.password.split(':');
+                const checkHash = crypto.pbkdf2Sync(credentials.password, salt, 1000, 64, 'sha512').toString('hex');
+
+                if (hash === checkHash) {
                     return {
-                        id: "1",
-                        name: "Trade Analyst",
-                        email: credentials.email,
-                        image: "/placeholder-avatar.jpg",
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
                     };
                 }
+
                 return null;
             },
         }),
