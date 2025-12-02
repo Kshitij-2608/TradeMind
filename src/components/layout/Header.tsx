@@ -34,11 +34,6 @@ export function Header() {
                 <div className="flex items-center gap-4">
                     <ModeToggle />
 
-                    <Button variant="ghost" size="icon" className="relative">
-                        <Bell className="h-6 w-6" />
-                        <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-destructive animate-pulse" />
-                    </Button>
-
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -62,10 +57,20 @@ export function Header() {
                                 Profile
                             </DropdownMenuItem>
                             <DropdownMenuItem>
+                                Saved Databases
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
                                 Settings
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem
+                                className="text-destructive cursor-pointer"
+                                onClick={() => {
+                                    // In a real app, you would use signOut() from next-auth/react here
+                                    // Since we are in a client component, we can redirect or call the function
+                                    window.location.href = '/login';
+                                }}
+                            >
                                 Log out
                             </DropdownMenuItem>
                         </DropdownMenuContent>
