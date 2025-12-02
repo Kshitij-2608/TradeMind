@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { Upload, FileSpreadsheet, Sparkles, Database } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -222,48 +223,60 @@ export default function DataUpload({ onDataLoad }: DataUploadProps) {
                     <span>Import/Export trade data with shipments, values, countries, and more</span>
                 </div>
 
-                <div className="pt-4 border-t border-primary/10">
-                    <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={async () => {
-                            const stored = localStorage.getItem('shipmentData');
-                            if (!stored) {
-                                toast({ title: "No data to save", variant: "destructive" });
-                                return;
-                            }
+                <div className="pt-4 border-t border-primary/10 space-y-3">
+                    <div className="flex gap-2">
+                        <Input
+                            placeholder="Enter dataset name (optional)"
+                            className="bg-background/50"
+                            id="dataset-name-input"
+                        />
+                        <Button
+                            variant="outline"
+                            className="whitespace-nowrap"
+                            onClick={async () => {
+                                const stored = localStorage.getItem('shipmentData');
+                                if (!stored) {
+                                    toast({ title: "No data to save", variant: "destructive" });
+                                    return;
+                                }
 
-                            setLoading(true);
-                            try {
-                                const data = JSON.parse(stored);
-                                const res = await fetch('/api/datasets/create', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        name: `Dataset ${new Date().toLocaleString()}`,
-                                        records: data
-                                    })
-                                });
+                                const nameInput = document.getElementById('dataset-name-input') as HTMLInputElement;
+                                const customName = nameInput?.value?.trim();
+                                const datasetName = customName || `Dataset ${new Date().toLocaleString()}`;
 
-                                const result = await res.json();
-                                if (!res.ok) throw new Error(result.error);
+                                setLoading(true);
+                                try {
+                                    const data = JSON.parse(stored);
+                                    const res = await fetch('/api/datasets/create', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            name: datasetName,
+                                            records: data
+                                        })
+                                    });
 
-                                toast({ title: "Saved to Cloud", description: result.message });
-                            } catch (e: any) {
-                                toast({
-                                    title: "Save Failed",
-                                    description: e.message || "Could not save to database",
-                                    variant: "destructive"
-                                });
-                            } finally {
-                                setLoading(false);
-                            }
-                        }}
-                        disabled={loading}
-                    >
-                        <Database className="mr-2 h-4 w-4" />
-                        Save Current Dataset to Cloud (Free Tier)
-                    </Button>
+                                    const result = await res.json();
+                                    if (!res.ok) throw new Error(result.error);
+
+                                    toast({ title: "Saved to Cloud", description: result.message });
+                                    if (nameInput) nameInput.value = ''; // Clear input
+                                } catch (e: any) {
+                                    toast({
+                                        title: "Save Failed",
+                                        description: e.message || "Could not save to database",
+                                        variant: "destructive"
+                                    });
+                                } finally {
+                                    setLoading(false);
+                                }
+                            }}
+                            disabled={loading}
+                        >
+                            <Database className="mr-2 h-4 w-4" />
+                            Save to Cloud
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
         </Card>
