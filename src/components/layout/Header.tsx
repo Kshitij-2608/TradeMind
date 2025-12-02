@@ -4,6 +4,7 @@ import React from 'react';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { Button } from '@/components/ui/button';
 import { Bell, User, Globe2 } from 'lucide-react';
+import { useSession, signOut } from "next-auth/react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,6 +16,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Header() {
+    const { data: session } = useSession();
+
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center justify-between px-6">
@@ -38,17 +41,17 @@ export function Header() {
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                                 <Avatar className="h-10 w-10">
-                                    <AvatarImage src="/placeholder-avatar.jpg" alt="@user" />
-                                    <AvatarFallback>TA</AvatarFallback>
+                                    <AvatarImage src={session?.user?.image || "/placeholder-avatar.jpg"} alt={session?.user?.name || "User"} />
+                                    <AvatarFallback>{session?.user?.name?.charAt(0) || "U"}</AvatarFallback>
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">Trade Analyst</p>
+                                    <p className="text-sm font-medium leading-none">{session?.user?.name || "Guest User"}</p>
                                     <p className="text-xs leading-none text-muted-foreground">
-                                        demo@example.com
+                                        {session?.user?.email || "guest@example.com"}
                                     </p>
                                 </div>
                             </DropdownMenuLabel>
@@ -62,9 +65,7 @@ export function Header() {
                             <DropdownMenuItem
                                 className="text-destructive cursor-pointer"
                                 onClick={() => {
-                                    // In a real app, you would use signOut() from next-auth/react here
-                                    // Since we are in a client component, we can redirect or call the function
-                                    window.location.href = '/login';
+                                    signOut({ callbackUrl: '/' });
                                 }}
                             >
                                 Log out

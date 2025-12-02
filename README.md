@@ -49,24 +49,19 @@ TradeMind offers a suite of powerful tools for trade analysts:
 - **Visualizations**: Dynamic charts showing imports by port, country, and product categories.
 - **Recent Activity**: Track your latest shipments and document uploads.
 
-### 2. 📄 Smart Document Digitization
-- **AI-Powered OCR**: Upload invoices, Bills of Entry, or Shipping Bills (Images/PDFs).
-- **Dynamic Extraction**: The system automatically detects the document type and extracts relevant fields (headers, line items, summaries) without needing a rigid template.
-- **Confidence Scoring**: See exactly how confident the AI is in its extraction.
-
-### 3. 🌍 Global Arbitrage Finder (Opportunities)
+### 2. 🌍 Global Arbitrage Finder (Opportunities)
 - **Market Discovery**: Automatically identifies the top 3 high-demand international markets for your most frequent products.
 - **Strategic Insights**: Provides price premiums, demand drivers, and entry strategies for each recommended market.
 
-### 4. 🔍 HS Code Classifier
+### 3. 🔍 HS Code Classifier
 - **Smart Classification**: Simply describe a product, and the AI will determine the correct Harmonized System (HS) code.
 - **Compliance**: Helps ensure accurate documentation and duty calculations.
 
-### 5. 🌱 Sustainability Analyzer
+### 4. 🌱 Sustainability Analyzer
 - **Carbon Footprint Estimation**: Analyzes your shipment data to estimate environmental impact.
 - **Green Tips**: Generates actionable advice to reduce your logistics carbon footprint using AI.
 
-### 6. 📊 Trade Simulator
+### 5. 📊 Trade Simulator
 - **Scenario Planning**: Simulate different trade scenarios (e.g., changing duties, shipping costs) to see their impact on your bottom line.
 
 ---

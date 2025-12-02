@@ -113,7 +113,7 @@ export function Sidebar({ className }: SidebarProps) {
                                 "w-full justify-start text-muted-foreground hover:text-destructive",
                                 isCollapsed ? "justify-center px-2" : "px-4"
                             )}
-                            onClick={() => signOut({ callbackUrl: '/login' })}
+                            onClick={() => signOut({ callbackUrl: '/' })}
                             title={isCollapsed ? "Sign Out" : undefined}
                         >
                             <LogOut className={cn("h-4 w-4", isCollapsed ? "mr-0" : "mr-2")} />

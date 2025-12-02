@@ -35,11 +35,6 @@ const features = [
     description: "Discover profitable market opportunities worldwide.",
     icon: Globe2,
   },
-  {
-    title: "Smart Digitization",
-    description: "Extract data from documents automatically with OCR.",
-    icon: FileText,
-  },
 ];
 
 export default function LandingPage() {
