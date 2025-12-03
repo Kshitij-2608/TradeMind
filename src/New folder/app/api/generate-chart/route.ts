@@ -156,10 +156,7 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    return NextResponse.json({
-      config: chartConfig,
-      explanation: `Plotted **${plan.xColumn}** (X-axis) vs **${plan.yColumn}** (Y-axis) using **${plan.aggregation}** aggregation.`
-    });
+    return NextResponse.json({ config: chartConfig });
 
   } catch (err: any) {
     console.error("Error generating chart:", err);

@@ -21,7 +21,6 @@ export default function AIChartGenerator({ data }: AIChartGeneratorProps) {
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [chartConfig, setChartConfig] = useState<any | null>(null);
-  const [explanation, setExplanation] = useState<string>('');
   const { toast } = useToast();
 
   const generateChart = async () => {
@@ -35,7 +34,6 @@ export default function AIChartGenerator({ data }: AIChartGeneratorProps) {
     }
 
     setLoading(true);
-    setExplanation(''); // Clear previous explanation
 
     try {
       const response = await fetch('/api/generate-chart', {
@@ -56,7 +54,6 @@ export default function AIChartGenerator({ data }: AIChartGeneratorProps) {
 
       if (result?.config) {
         setChartConfig(result.config);
-        if (result.explanation) setExplanation(result.explanation);
         toast({
           title: 'Success',
           description: 'Chart generated successfully!'
@@ -79,7 +76,6 @@ export default function AIChartGenerator({ data }: AIChartGeneratorProps) {
   const handleClear = () => {
     setDescription('');
     setChartConfig(null);
-    setExplanation('');
   };
 
   return (
@@ -146,27 +142,12 @@ export default function AIChartGenerator({ data }: AIChartGeneratorProps) {
       </Card>
 
       {chartConfig && (
-        <div className="space-y-4">
-          <PlotlyChart
-            data={chartConfig.data || []}
-            layout={chartConfig.layout || {}}
-            title="AI Generated Chart"
-            description="Custom visualization based on your description"
-          />
-          {explanation && (
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-4 flex items-start gap-3">
-                <div className="p-2 rounded-full bg-primary/10 text-primary mt-0.5">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-primary mb-1">AI Insight</h4>
-                  <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: explanation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        <PlotlyChart
+          data={chartConfig.data || []}
+          layout={chartConfig.layout || {}}
+          title="AI Generated Chart"
+          description="Custom visualization based on your description"
+        />
       )}
 
       {!chartConfig && !loading && (
